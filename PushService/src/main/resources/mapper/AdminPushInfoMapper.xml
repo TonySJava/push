@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jjbike.mapper.IAdminPushInfo">
+
+    <!-- 若不需要自动返回主键，将useGeneratedKeys="true" keyProperty="id"去掉即可(当然如果不需要自动返回主键，直接用注解即可) -->
+    <insert id="add" parameterType="com.jjbike.entity.push.AdminPushInfo" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO t_admin_push_info
+        (
+        DeviceToken,
+        addTime,
+        adminId,
+        area_no
+        )
+        VALUES
+        (
+        #{DeviceToken},
+        #{addtime},
+        #{adminId},
+        #{areaId}
+        )
+    </insert>
+
+    <resultMap id="AdminPushInfoResult" type="com.jjbike.entity.push.AdminPushInfo">
+        <id column="id" jdbcType="VARCHAR" property="id"/>
+        <result column="DeviceToken" jdbcType="VARCHAR" property="DeviceToken"/>
+        <result column="addtime" jdbcType="VARCHAR" property="addTime"/>
+        <result column="adminId" jdbcType="VARCHAR" property="adminId"/>
+        <result column="area_no" jdbcType="VARCHAR" property="areaId"/>
+    </resultMap>
+
+    <select id="list" resultMap="AdminPushInfoResult">
+        SELECT
+        id,
+        DeviceToken,
+        addTime,
+        adminId,
+        areaId
+        FROM t_admin_push_info
+        ORDER BY id
+    </select>
+
+    <select id="findByAdminId" parameterType="java.lang.String" resultType="com.jjbike.entity.push.AdminPushInfo">
+        SELECT
+        id,
+        DeviceToken,
+        addtime,
+        adminId,
+        area_no
+        FROM t_admin_push_info
+        WHERE adminId = #{adminId, jdbcType=INTEGER}
+        ORDER BY id
+        LIMIT 1
+    </select>
+    <select id="findByName" parameterType="java.lang.String" resultType="com.jjbike.entity.push.AdminPushInfo">
+        SELECT
+        id,
+        DeviceToken,
+        addtime,
+        adminId,
+        area_no
+        FROM t_admin_push_info
+        WHERE adminId = #{adminId, jdbcType=VARCHAR}
+        ORDER BY id
+        LIMIT 1
+    </select>
+
+    <select id="count" resultType="java.lang.Integer">
+        SELECT count(1)
+        FROM t_admin_push_info
+    </select>
+
+    <delete id="delete" parameterType="java.lang.Integer">
+        DELETE FROM t_admin_push_info
+        WHERE id = #{id}
+    </delete>
+
+    <update id="update" parameterType="com.jjbike.entity.push.AdminPushInfo">
+        UPDATE t_admin_push_info
+        <set>
+            <if test="DeviceToken != null">DeviceToken = #{DeviceToken, jdbcType=VARCHAR},</if>
+            <if test="addTime != null">addTime = #{addTime, jdbcType=Date},</if>
+            <if test="adminId != null">adminId = #{adminId, jdbcType=VARCHAR},</if>
+            <if test="areaId != null">areaId = #{areaId, jdbcType=VARCHAR},</if>
+        </set>
+        WHERE id = #{id, jdbcType=INTEGER}
+    </update>
+
+    <select id="isExisted" parameterType="com.jjbike.entity.push.AdminPushInfo" resultType="com.jjbike.entity.push.AdminPushInfo">
+        SELECT
+        id,
+        DeviceToken,
+        addTime,
+        adminId,
+        areaId
+        FROM t_admin_push_info
+        <where>
+            <if test="adminId != null and !&quot;&quot;.equals(adminId.trim())">
+                AND adminId = #{adminId, jdbcType=VARCHAR}
+            </if>
+            <if test="id != null and !&quot;&quot;.equals(id.trim())">
+                AND id IS NOT NULL AND id = #{id, jdbcType=VARCHAR}
+            </if>
+        </where>
+        ORDER BY id
+        LIMIT 1
+    </select>
+
+</mapper>
