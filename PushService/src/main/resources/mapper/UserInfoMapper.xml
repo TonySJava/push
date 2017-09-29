@@ -1,0 +1,432 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 指定工作空间，要与接口名相同，源代码没有去看，猜测应该是通过"这里的namespace.下边方法的id"来定位方法的 -->
+<mapper namespace="com.jjbike.mapper.IUserInfo">
+    
+	<sql id="UserInfoColumns">
+		a.real_name AS "realName",
+		a.nickname AS "nickname",
+		a.nationality AS "nationality",
+		a.phone AS "phone",
+		a.id_cardnum AS "idCardnum",
+		a.city_no AS "cityNo",
+		a.deposit AS "deposit",
+		a.balance as "balance",
+		a.change_battery_status AS "changeBatteryStatus",
+		a.integral AS "integral",
+		a.login_state AS "loginState",
+		a.id AS "id",
+		a.login_time AS "loginTime",
+		a.m_borrow_bicycle AS "mBorrowBicycle",
+		a.m_borrow_bicycle_date AS "mBorrowBicycleDate",
+		a.validate_date AS "validateDate",
+		a.remarks AS "remarks",
+		a.credit_score AS "creditScore",
+		a.account_status AS "accountStatus",
+		a.add_time AS "addTime",
+		a.app_version AS "appVersion",
+		a.certificate_negative AS "certificateNegative",
+		a.certificate_positive AS "certificatePositive",
+		a.guester_state AS "guesterState",
+		a.m_phone_system_version AS "mPhoneSystemVersion",
+		a.open_date AS "openDate",
+		a.picurl AS "picture",
+		a.status_change_time AS "statusChangeTime",
+		a.user_level AS "userLevel",
+		a.create_by AS "createBy.id",
+		a.create_date AS "createDate",
+		a.update_by AS "updateBy.id",
+		a.update_date AS "updateDate",
+		a.del_flag AS "delFlag",
+		a.lucky_money AS "luckyMoney",
+		r.calorie AS "totalCalorie",
+		r.duration AS "totalDuration",
+		r.kilometers AS "totalKilometers"
+	</sql>
+	<sql id="UserInfoPushColumns">
+	a.phone AS "phone",
+	p.DeviceToken AS "deviceToken"
+</sql>
+	<sql id="UserInfoJoins">
+		LEFT JOIN t_user_report r on a.id=r.user_id
+	</sql>
+
+	<sql id="UserInfoPushJoins">
+		LEFT  JOIN t_push_info p ON p.userId=a.id
+	</sql>
+    
+	<select id="get" parameterType="java.lang.String" resultType="com.jjbike.entity.push.UserInfo">
+		SELECT 
+			<include refid="UserInfoColumns"/>
+		FROM t_user_info a
+		<include refid="UserInfoJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	<!--<select id="findList" resultType="UsersInfo">-->
+		<!--SELECT-->
+			<!--<include refid="UserInfoColumns"/>-->
+		<!--FROM t_user_info a-->
+		<!--<include refid="UserInfoJoins"/>-->
+		<!--<where>-->
+			<!--(1=1)-->
+			<!--<if test="realName != null and realName != ''">-->
+				<!--AND a.real_name LIKE-->
+					<!--<if test="dbName == 'oracle'">'%'||#{realName}||'%'</if>-->
+					<!--<if test="dbName == 'mssql'">'%'+#{realName}+'%'</if>-->
+					<!--<if test="dbName == 'mysql'">concat('%',#{realName},'%')</if>-->
+			<!--</if>-->
+			<!--<if test="nickname != null and nickname != ''">-->
+				<!--AND a.nickname LIKE-->
+					<!--<if test="dbName == 'oracle'">'%'||#{nickname}||'%'</if>-->
+					<!--<if test="dbName == 'mssql'">'%'+#{nickname}+'%'</if>-->
+					<!--<if test="dbName == 'mysql'">concat('%',#{nickname},'%')</if>-->
+			<!--</if>-->
+			<!--<if test="phone != null and phone != ''">-->
+				<!--AND a.phone LIKE-->
+					<!--<if test="dbName == 'oracle'">'%'||#{phone}||'%'</if>-->
+					<!--<if test="dbName == 'mssql'">'%'+#{phone}+'%'</if>-->
+					<!--<if test="dbName == 'mysql'">concat('%',#{phone},'%')</if>-->
+			<!--</if>-->
+			<!--<if test="idCardnum != null and idCardnum != ''">-->
+				<!--AND a.id_cardnum LIKE-->
+					<!--<if test="dbName == 'oracle'">'%'||#{idCardnum}||'%'</if>-->
+					<!--<if test="dbName == 'mssql'">'%'+#{idCardnum}+'%'</if>-->
+					<!--<if test="dbName == 'mysql'">concat('%',#{idCardnum},'%')</if>-->
+			<!--</if>-->
+			<!--<if test="changeBatteryStatus !=null and changeBatteryStatus !='' ">-->
+				<!--AND a.change_battery_status =#{changeBatteryStatus}-->
+			<!--</if>-->
+			<!--<if test="minCreditScore !=null and minCreditScore !='' and maxCreditScore !=null and maxCreditScore !='' ">-->
+				<!--AND a.credit_score BETWEEN #{minCreditScore} AND #{maxCreditScore}-->
+			<!--</if>-->
+			<!--<if test="minLuckyMoney !=null and minLuckyMoney !='' and maxLuckyMoney !=null and maxLuckyMoney !='' ">-->
+				<!--AND a.lucky_money BETWEEN #{minLuckyMoney} AND #{maxLuckyMoney}-->
+			<!--</if>-->
+			<!--<if test="minTotalCalorie !=null and minTotalCalorie !='' and maxTotalCalorie !=null and maxTotalCalorie !='' ">-->
+				<!--AND r.calorie BETWEEN #{minTotalCalorie} AND #{maxTotalCalorie}-->
+			<!--</if>-->
+			<!--<if test="minTotalDuration !=null and minTotalDuration !='' and maxTotalDuration !=null and maxTotalDuration !='' ">-->
+			<!--AND r.duration BETWEEN #{minTotalDuration} AND #{maxTotalDuration}-->
+			<!--</if>-->
+			<!--<if test="minTotalKilometers !=null and minTotalKilometers !='' and maxTotalKilometers !=null and maxTotalKilometers !='' ">-->
+				<!--AND r.kilometers BETWEEN #{minTotalKilometers} AND #{maxTotalKilometers}-->
+			<!--</if>-->
+
+			<!--<if test="mBorrowBicycle !=null and mBorrowBicycle !='' ">-->
+				<!--AND <if test="dbName == 'mssql'">','+#{mBorrowBicycle}+','</if>-->
+				<!--<if test="dbName == 'oracle'">','||#{mBorrowBicycle}||','</if>-->
+				<!--<if test="dbName == 'mysql'">concat(',',#{mBorrowBicycle},',')</if>-->
+
+				<!--like <if test="dbName == 'mssql'">'%,'+CAST(a.m_borrow_bicycle as VARCHAR(2))+',%'</if>-->
+				<!--<if test="dbName == 'oracle'">'%,'||CAST(a.m_borrow_bicycle as varchar(2)||',%'</if>-->
+				<!--<if test="dbName == 'mysql'">concat('%,',CAST(a.m_borrow_bicycle as char(2)),',%')</if>-->
+			<!--</if>-->
+			<!--<if test="minMBorrowBicycleDate !=null and minMBorrowBicycleDate !='' and maxMBorrowBicycleDate !=null and maxMBorrowBicycleDate !='' ">-->
+				<!--AND a.m_borrow_bicycle_date BETWEEN #{minMBorrowBicycleDate} AND #{maxMBorrowBicycleDate}-->
+			<!--</if>-->
+			<!--<if test="minAddTime !=null and minAddTime !='' and maxAddTime !=null and maxAddTime !='' ">-->
+				<!--AND a.add_time BETWEEN #{minAddTime} AND #{maxAddTime}-->
+			<!--</if>-->
+			<!--<if test="accountStatus !=null and accountStatus !='' ">-->
+
+				<!--AND <if test="dbName == 'mssql'">','+#{accountStatus}+','</if>-->
+					<!--<if test="dbName == 'oracle'">','||#{accountStatus}||','</if>-->
+					<!--<if test="dbName == 'mysql'">concat(',',#{accountStatus},',')</if>-->
+
+				<!--like <if test="dbName == 'mssql'">'%,'+CAST(a.account_status as VARCHAR(2))+',%'</if>-->
+				<!--<if test="dbName == 'oracle'">'%,'||CAST(a.account_status as varchar(2))||',%'</if>-->
+				<!--<if test="dbName == 'mysql'">concat('%,',CAST(a.account_status as char(2)),',%')</if>-->
+
+			<!--</if>-->
+			<!--<if test="userLevel != null and userLevel != ''">-->
+				<!--AND a.user_level = #{userLevel}-->
+			<!--</if>-->
+		<!--</where>-->
+		<!--<choose>-->
+			<!--<when test="page !=null and page.orderBy != null and page.orderBy != ''">-->
+				<!--ORDER BY ${page.orderBy}-->
+			<!--</when>-->
+			<!--<otherwise>-->
+				<!--ORDER BY a.add_time DESC-->
+			<!--</otherwise>-->
+		<!--</choose>-->
+	<!--</select>-->
+
+	<!--<select id="findListPush" resultType="UsersInfo">-->
+		<!--SELECT-->
+		<!--<include refid="UserInfoPushColumns"/>-->
+		<!--FROM t_user_info a-->
+		<!--<include refid="UserInfoJoins"/>-->
+		<!--<include refid="UserInfoPushJoins"/>-->
+		<!--<where>-->
+			<!--(1=1)-->
+			<!--<if test="realName != null and realName != ''">-->
+				<!--AND a.real_name LIKE-->
+				<!--<if test="dbName == 'oracle'">'%'||#{realName}||'%'</if>-->
+				<!--<if test="dbName == 'mssql'">'%'+#{realName}+'%'</if>-->
+				<!--<if test="dbName == 'mysql'">concat('%',#{realName},'%')</if>-->
+			<!--</if>-->
+			<!--<if test="nickname != null and nickname != ''">-->
+				<!--AND a.nickname LIKE-->
+				<!--<if test="dbName == 'oracle'">'%'||#{nickname}||'%'</if>-->
+				<!--<if test="dbName == 'mssql'">'%'+#{nickname}+'%'</if>-->
+				<!--<if test="dbName == 'mysql'">concat('%',#{nickname},'%')</if>-->
+			<!--</if>-->
+			<!--<if test="phone != null and phone != ''">-->
+				<!--AND a.phone LIKE-->
+				<!--<if test="dbName == 'oracle'">'%'||#{phone}||'%'</if>-->
+				<!--<if test="dbName == 'mssql'">'%'+#{phone}+'%'</if>-->
+				<!--<if test="dbName == 'mysql'">concat('%',#{phone},'%')</if>-->
+			<!--</if>-->
+			<!--<if test="idCardnum != null and idCardnum != ''">-->
+				<!--AND a.id_cardnum LIKE-->
+				<!--<if test="dbName == 'oracle'">'%'||#{idCardnum}||'%'</if>-->
+				<!--<if test="dbName == 'mssql'">'%'+#{idCardnum}+'%'</if>-->
+				<!--<if test="dbName == 'mysql'">concat('%',#{idCardnum},'%')</if>-->
+			<!--</if>-->
+			<!--<if test="changeBatteryStatus !=null and changeBatteryStatus !='' ">-->
+				<!--AND a.change_battery_status =#{changeBatteryStatus}-->
+			<!--</if>-->
+			<!--<if test="minCreditScore !=null and minCreditScore !='' and maxCreditScore !=null and maxCreditScore !='' ">-->
+				<!--AND a.credit_score BETWEEN #{minCreditScore} AND #{maxCreditScore}-->
+			<!--</if>-->
+			<!--<if test="minLuckyMoney !=null and minLuckyMoney !='' and maxLuckyMoney !=null and maxLuckyMoney !='' ">-->
+				<!--AND a.lucky_money BETWEEN #{minLuckyMoney} AND #{maxLuckyMoney}-->
+			<!--</if>-->
+			<!--<if test="minTotalCalorie !=null and minTotalCalorie !='' and maxTotalCalorie !=null and maxTotalCalorie !='' ">-->
+				<!--AND r.calorie BETWEEN #{minTotalCalorie} AND #{maxTotalCalorie}-->
+			<!--</if>-->
+			<!--<if test="minTotalDuration !=null and minTotalDuration !='' and maxTotalDuration !=null and maxTotalDuration !='' ">-->
+				<!--AND r.duration BETWEEN #{minTotalDuration} AND #{maxTotalDuration}-->
+			<!--</if>-->
+			<!--<if test="minTotalKilometers !=null and minTotalKilometers !='' and maxTotalKilometers !=null and maxTotalKilometers !='' ">-->
+				<!--AND r.kilometers BETWEEN #{minTotalKilometers} AND #{maxTotalKilometers}-->
+			<!--</if>-->
+
+			<!--<if test="mBorrowBicycle !=null and mBorrowBicycle !='' ">-->
+				<!--AND <if test="dbName == 'mssql'">','+#{mBorrowBicycle}+','</if>-->
+				<!--<if test="dbName == 'oracle'">','||#{mBorrowBicycle}||','</if>-->
+				<!--<if test="dbName == 'mysql'">concat(',',#{mBorrowBicycle},',')</if>-->
+
+				<!--like <if test="dbName == 'mssql'">'%,'+CAST(a.m_borrow_bicycle as VARCHAR(2))+',%'</if>-->
+				<!--<if test="dbName == 'oracle'">'%,'||CAST(a.m_borrow_bicycle as varchar(2))||',%'</if>-->
+				<!--<if test="dbName == 'mysql'">concat('%,',CAST(a.m_borrow_bicycle as char(2)),',%')</if>-->
+			<!--</if>-->
+			<!--<if test="minMBorrowBicycleDate !=null and minMBorrowBicycleDate !='' and maxMBorrowBicycleDate !=null and maxMBorrowBicycleDate !='' ">-->
+				<!--AND a.m_borrow_bicycle_date BETWEEN #{minMBorrowBicycleDate} AND #{maxMBorrowBicycleDate}-->
+			<!--</if>-->
+			<!--<if test="minAddTime !=null and minAddTime !='' and maxAddTime !=null and maxAddTime !='' ">-->
+				<!--AND a.add_time BETWEEN #{minAddTime} AND #{maxAddTime}-->
+			<!--</if>-->
+			<!--<if test="accountStatus !=null and accountStatus !='' ">-->
+
+				<!--AND <if test="dbName == 'mssql'">','+#{accountStatus}+','</if>-->
+				<!--<if test="dbName == 'oracle'">','||#{accountStatus}||','</if>-->
+				<!--<if test="dbName == 'mysql'">concat(',',#{accountStatus},',')</if>-->
+
+				<!--like <if test="dbName == 'mssql'">'%,'+CAST(a.account_status as VARCHAR(2))+',%'</if>-->
+				<!--<if test="dbName == 'oracle'">'%,'||CAST(a.account_status as varchar(2))||',%'</if>-->
+				<!--<if test="dbName == 'mysql'">concat('%,',CAST(a.account_status as char(2)),',%')</if>-->
+
+			<!--</if>-->
+			<!--<if test="userLevel != null and userLevel != ''">-->
+				<!--AND a.user_level = #{userLevel}-->
+			<!--</if>-->
+		<!--</where>-->
+		<!--<choose>-->
+			<!--<when test="page !=null and page.orderBy != null and page.orderBy != ''">-->
+				<!--ORDER BY ${page.orderBy}-->
+			<!--</when>-->
+			<!--<otherwise>-->
+				<!--ORDER BY a.add_time DESC-->
+			<!--</otherwise>-->
+		<!--</choose>-->
+	<!--</select>-->
+	<!--<select id="findAllList" resultType="UsersInfo">-->
+		<!--SELECT-->
+			<!--<include refid="UserInfoColumns"/>-->
+		<!--FROM t_user_info a-->
+		<!--<include refid="UserInfoJoins"/>-->
+		<!--<where>-->
+			<!--(1=1)-->
+		<!--</where>-->
+		<!--<choose>-->
+			<!--<when test="page !=null and page.orderBy != null and page.orderBy != ''">-->
+				<!--ORDER BY ${page.orderBy}-->
+			<!--</when>-->
+			<!--<otherwise>-->
+				<!--ORDER BY a.update_date DESC-->
+			<!--</otherwise>-->
+		<!--</choose>-->
+	<!--</select>-->
+
+	<!--<insert id="insert">-->
+		<!--INSERT INTO t_user_info(-->
+			<!--real_name,-->
+			<!--nickname,-->
+			<!--nationality,-->
+			<!--phone,-->
+			<!--id_cardnum,-->
+			<!--city_no,-->
+			<!--deposit,-->
+			<!--balance,-->
+			<!--change_battery_status,-->
+			<!--integral,-->
+			<!--login_state,-->
+			<!--id,-->
+			<!--login_time,-->
+			<!--m_borrow_bicycle,-->
+			<!--m_borrow_bicycle_date,-->
+			<!--validate_date,-->
+			<!--remarks,-->
+			<!--credit_score,-->
+			<!--account_status,-->
+			<!--add_time,-->
+			<!--app_version,-->
+			<!--certificate_negative,-->
+			<!--certificate_positive,-->
+			<!--guester_state,-->
+			<!--m_phone_system_version,-->
+			<!--open_date,-->
+			<!--&lt;!&ndash; picurl, &ndash;&gt;-->
+			<!--status_change_time,-->
+			<!--user_level,-->
+			<!--create_by,-->
+			<!--create_date,-->
+			<!--update_by,-->
+			<!--update_date,-->
+			<!--del_flag-->
+		<!--) VALUES (-->
+			<!--#{realName},-->
+			<!--#{nickname},-->
+			<!--#{nationality},-->
+			<!--#{phone},-->
+			<!--#{idCardnum},-->
+			<!--#{cityNo},-->
+			<!--#{deposit},-->
+			<!--#{balance},-->
+			<!--#{changeBatteryStatus},-->
+			<!--#{integral},-->
+			<!--#{loginState},-->
+			<!--#{id},-->
+			<!--#{loginTime},-->
+			<!--#{mBorrowBicycle},-->
+			<!--#{mBorrowBicycleDate},-->
+			<!--#{validateDate},-->
+			<!--#{remarks},-->
+			<!--#{creditScore},-->
+			<!--#{accountStatus},-->
+			<!--#{addTime},-->
+			<!--#{appVersion},-->
+			<!--#{certificateNegative},-->
+			<!--#{certificatePositive},-->
+			<!--#{guesterState},-->
+			<!--#{mPhoneSystemVersion},-->
+			<!--#{openDate},-->
+			<!--&lt;!&ndash; #{picture}, &ndash;&gt;-->
+			<!--#{statusChangeTime},-->
+			<!--#{userLevel},-->
+			<!--#{createBy.id},-->
+			<!--#{createDate},-->
+			<!--#{updateBy.id},-->
+			<!--#{updateDate},-->
+			<!--#{delFlag}-->
+		<!--)-->
+	<!--</insert>-->
+		<!--<update id="update">-->
+		<!--UPDATE t_user_info SET-->
+			<!--real_name = #{realName},-->
+			<!--nickname = #{nickname},-->
+			<!--nationality = #{nationality},-->
+			<!--phone = #{phone},-->
+			<!--id_cardnum = #{idCardnum},-->
+			<!--city_no = #{cityNo},-->
+			<!--deposit = #{deposit},-->
+			<!--balance = #{balance},-->
+			<!--change_battery_status = #{changeBatteryStatus},-->
+			<!--integral = #{integral},-->
+			<!--login_state = #{loginState},-->
+			<!--login_time = #{loginTime},-->
+			<!--m_borrow_bicycle = #{mBorrowBicycle},-->
+			<!--m_borrow_bicycle_date = #{mBorrowBicycleDate},-->
+			<!--validate_date = #{validateDate},-->
+			<!--remarks = #{remarks},-->
+			<!--credit_score = #{creditScore},-->
+			 <!--account_status = #{accountStatus},-->
+			<!--add_time = #{addTime},-->
+			<!--app_version = #{appVersion},-->
+			<!--certificate_negative = #{certificateNegative},-->
+			<!--certificate_positive = #{certificatePositive},-->
+			<!--guester_state = #{guesterState},-->
+			<!--m_phone_system_version = #{mPhoneSystemVersion},-->
+			<!--open_date = #{openDate},-->
+			<!--&lt;!&ndash; picurl = #{picurl}, &ndash;&gt;-->
+			<!--status_change_time = #{statusChangeTime},-->
+			<!--user_level = #{userLevel}-->
+		<!--WHERE id = #{id}-->
+	<!--</update>-->
+	<!--<update id="reset">-->
+		<!--UPDATE t_user_info SET-->
+		<!--m_borrow_bicycle = #{mBorrowBicycle},-->
+		<!--remarks = #{remarks},-->
+		<!--update_by = #{updateBy.id},-->
+		<!--update_date =#{updateDate}-->
+		<!--WHERE id = #{id};-->
+
+		<!--INSERT INTO t_user_reset_borrow_flag (-->
+			<!--update_by,-->
+			<!--update_date,-->
+			<!--phone,-->
+			<!--realName-->
+		<!--)-->
+		<!--VALUES-->
+			<!--( #{updateBy.id},-->
+			  <!--#{updateDate},-->
+			  <!--#{phone},-->
+			  <!--#{realName}-->
+			<!--);-->
+	<!--</update>-->
+	<!--<update id="updateLuckyMoney">-->
+		<!--UPDATE t_user_info SET-->
+			<!--lucky_money = #{luckyMoney}-->
+		<!--WHERE id = #{id}-->
+	<!--</update>-->
+	<!--<update id="valide">-->
+		<!--UPDATE t_user_info SET-->
+			<!--account_status = #{accountStatus}-->
+		<!--WHERE id = #{id};-->
+
+		<!--INSERT INTO t_user_valide_recorde-->
+           <!--(-->
+           <!--id,-->
+           <!--create_by-->
+           <!--,create_date-->
+           <!--,update_by-->
+           <!--,update_date-->
+           <!--,remarks-->
+           <!--,del_flag-->
+           <!--,user_Id-->
+           <!--,valide_flag-->
+           <!--,valide_reason-->
+           <!--)-->
+     <!--VALUES-->
+     		<!--(-->
+     		<!--#{valideUUID},-->
+     		<!--#{createBy.id},-->
+     		<!--#{createDate},-->
+     		<!--#{updateBy.id},-->
+			<!--#{updateDate},-->
+			<!--#{remarks},-->
+			<!--#{delFlag},-->
+			<!--#{id},-->
+			<!--#{valideFlag},-->
+			<!--#{valideMark}-->
+			<!--)-->
+	<!--</update>-->
+	<!--<update id="delete">-->
+		<!--UPDATE   t_user_info a SET  del_flag=#{DEL_FLAG_DELETE}-->
+		<!--WHERE id = #{id}-->
+	<!--</update>-->
+	
+</mapper>
